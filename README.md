@@ -27,8 +27,11 @@ This activity accomplished the following learning objectives:
 
 ## 3. Student Registration System Diagram
 
-The registration process follows a simple flow from form submission to final profile display.
+The registration process follows a simple flow from form submission to final profile display. The diagram below shows the main user journey, the validation flow, and the sequence of actions that turn a form submission into a stored student record.
 
+<div align="center">
+  <img src="app/docs/screenshots/Student%20Registration%20Sytem%20Diagrams.png" alt="Student registration system diagrams" width="1200" />
+</div>
 
 ## 4. Validation Rules
 
@@ -53,8 +56,11 @@ The form also uses browser-side attributes such as `required`, `type="email"`, a
 
 ### Entity Relationship Diagram
 
-The current application contains one main entity. Each row in `students` represents one registered student.
+The current application contains one main entity. Each row in `students` represents one registered student. The diagram below shows the relationship between the user account, student profile, course enrollment, and course records that support the registration workflow.
 
+<div align="center">
+  <img src="app/docs/screenshots/Student%20Registration%20Sytem%20Diagrams.png" alt="Student registration system database design diagram" width="1200" />
+</div>
 
 ## 6. Registration Flowchart
 
