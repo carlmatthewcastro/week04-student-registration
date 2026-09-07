@@ -27,6 +27,7 @@
                 </span>
             </a>
             <nav class="flex items-center gap-2 text-sm font-semibold">
+                <a href="{{ route('/') }}" class="rounded-lg px-3 py-2 text-slate-600 transition hover:bg-indigo-50 hover:text-indigo-700">Home</a>
                 <a href="{{ route('students.index') }}" class="rounded-lg px-3 py-2 text-slate-600 transition hover:bg-indigo-50 hover:text-indigo-700">Directory</a>
                 <a href="{{ route('students.create') }}" class="rounded-lg bg-indigo-600 px-4 py-2.5 text-white shadow-md shadow-indigo-600/20 transition hover:-translate-y-0.5 hover:bg-indigo-700">+ <span class="hidden sm:inline">Add student</span><span class="sm:hidden">Add</span></a>
             </nav>
