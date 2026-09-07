@@ -1,85 +1,12 @@
-<!-- resources/views/students/show.blade.php -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Profile Preview</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    </style>
-</head>
-<body class="bg-gradient-to-tr from-slate-100 via-blue-50/40 to-indigo-50/50 min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-    <div class="max-w-2xl w-full bg-white/80 backdrop-blur-xl shadow-2xl shadow-indigo-100/50 rounded-3xl border border-white overflow-hidden p-8 sm:p-10">
-        
-        @if(session('success'))
-            <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl flex items-center shadow-sm">
-                <svg class="w-5 h-5 text-emerald-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                <span class="text-sm font-medium">{{ session('success') }}</span>
-            </div>
-        @endif
+@extends('layouts.app', ['title' => 'Student profile'])
 
-        <div class="text-center mb-8">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 mb-2 tracking-wide uppercase">
-                Verified Profile
-            </span>
-            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Student Details</h2>
-        </div>
-
-        <div class="flex flex-col items-center mb-8 text-center">
-            <div class="relative">
-                <img src="{{ asset('storage/' . $student->profile_picture) }}" alt="Profile Picture" class="w-36 h-36 rounded-2xl object-cover ring-4 ring-indigo-500/20 shadow-xl">
-                <span class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white rounded-full"></span>
-            </div>
-            <h3 class="text-2xl font-bold text-slate-900 mt-4">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}</h3>
-            <span class="inline-flex items-center px-3 py-1 mt-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
-                {{ $student->student_id }}
-            </span>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/70 p-6 rounded-2xl border border-slate-100 text-sm">
-            <div>
-                <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Email Address</span>
-                <span class="font-semibold text-slate-800 mt-0.5 block break-all">{{ $student->email }}</span>
-            </div>
-            <div>
-                <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Mobile Number</span>
-                <span class="font-semibold text-slate-800 mt-0.5 block">{{ $student->mobile_number }}</span>
-            </div>
-            <div>
-                <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Date of Birth</span>
-                <span class="font-semibold text-slate-800 mt-0.5 block">{{ $student->date_of_birth }}</span>
-            </div>
-            <div>
-                <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Gender</span>
-                <span class="font-semibold text-slate-800 mt-0.5 block">{{ $student->gender }}</span>
-            </div>
-            <div>
-                <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Program</span>
-                <span class="font-semibold text-slate-800 mt-0.5 block">{{ $student->program }}</span>
-            </div>
-            <div>
-                <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Year Level</span>
-                <span class="font-semibold text-slate-800 mt-0.5 block">{{ $student->year_level }}</span>
-            </div>
-            <div class="sm:col-span-2 pt-3 border-t border-slate-200/60">
-                <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Address</span>
-                <span class="font-semibold text-slate-800 mt-0.5 block">{{ $student->address }}</span>
-            </div>
-        </div>
-
-        <div class="mt-8 text-center">
-            <a href="{{ route('students.create') }}" class="inline-flex items-center justify-center px-5 py-3 text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition duration-150 shadow-sm">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                Register Another Student
-            </a>
-        </div>
-    </div>
-</body>
-</html>
+@section('content')
+<div class="mx-auto max-w-4xl">
+    <div class="mb-8 flex items-end justify-between gap-4"><div><p class="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-indigo-600">Directory profile</p><h1 class="text-3xl font-bold tracking-tight text-slate-950">Student profile</h1></div><a href="{{ route('students.index') }}" class="hidden rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-indigo-200 hover:text-indigo-700 sm:block">← Back to directory</a></div>
+    <article class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
+        <div class="bg-slate-950 px-6 py-8 text-white sm:px-10"><div class="flex flex-col items-start gap-6 sm:flex-row sm:items-center"><div class="relative flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-indigo-500/30 font-display text-2xl font-bold text-indigo-200 ring-4 ring-white/10">{{ $student->initials }}<img src="{{ asset('storage/' . $student->profile_picture) }}" alt="Profile picture of {{ $student->first_name }} {{ $student->last_name }}" class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()"></div><div><div class="mb-3 flex flex-wrap gap-2"><span class="rounded-full bg-indigo-400/20 px-3 py-1 text-xs font-bold text-indigo-200">{{ $student->program }}</span><span class="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-slate-200">{{ $student->year_level }}</span></div><h2 class="text-3xl font-bold">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}</h2><p class="mt-2 text-sm text-slate-400">Student ID <span class="font-semibold text-slate-200">{{ $student->student_id }}</span></p></div></div></div>
+        <div class="grid gap-x-8 gap-y-7 p-6 sm:grid-cols-2 sm:p-10"><div><p class="text-xs font-bold uppercase tracking-wider text-slate-400">Email address</p><p class="mt-1 break-all font-semibold text-slate-800">{{ $student->email }}</p></div><div><p class="text-xs font-bold uppercase tracking-wider text-slate-400">Mobile number</p><p class="mt-1 font-semibold text-slate-800">{{ $student->mobile_number }}</p></div><div><p class="text-xs font-bold uppercase tracking-wider text-slate-400">Date of birth</p><p class="mt-1 font-semibold text-slate-800">{{ $student->date_of_birth->format('F j, Y') }}</p></div><div><p class="text-xs font-bold uppercase tracking-wider text-slate-400">Gender</p><p class="mt-1 font-semibold text-slate-800">{{ $student->gender }}</p></div><div class="border-t border-slate-100 pt-6 sm:col-span-2"><p class="text-xs font-bold uppercase tracking-wider text-slate-400">Complete address</p><p class="mt-1 font-semibold leading-6 text-slate-800">{{ $student->address }}</p></div></div>
+    </article>
+    <a href="{{ route('students.create') }}" class="mt-6 block text-center text-sm font-bold text-indigo-600 hover:text-indigo-800 sm:hidden">← Register another student</a>
+</div>
+@endsection

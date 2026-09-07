@@ -1,59 +1,251 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Student Registration System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 12 student registration system for collecting, validating, storing, and displaying student records with profile pictures.
 
-## About Laravel
+## 1. Introduction
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+A Student Registration System is a web application that allows an institution to collect and manage student information in one organized location. This project records identity details, contact information, academic placement, and a profile picture. It provides a registration form, a student directory, and an individual student profile page.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Data validation is important because it prevents incomplete, incorrectly formatted, duplicated, or unsafe information from entering the database. Validation improves data quality and gives users clear feedback when a value needs to be corrected. In this project, Laravel validates data on the server before a student record is created.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Registration systems are common in enterprise applications such as university information systems, human resources platforms, healthcare portals, and customer relationship management systems. They provide a controlled entry point for data, support accurate reporting, reduce repetitive manual work, and allow authorized users to retrieve records quickly.
 
-## Learning Laravel
+## 2. Objectives
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+This activity accomplished the following learning objectives:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Build a CRUD-style registration workflow using Laravel.
+- Define routes and connect them to controller actions.
+- Create a database table using a Laravel migration.
+- Use an Eloquent model for mass assignment and data access.
+- Apply server-side validation rules to user-submitted data.
+- Validate and securely store an uploaded profile image.
+- Display validation errors and session flash messages in Blade views.
+- Use route model binding to display a student profile.
+- Understand how a web request travels through the Laravel framework.
+- Document the application and its database design using Markdown and diagrams.
 
-## Laravel Sponsors
+## 3. Laravel Request Lifecycle
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+When a user submits the registration form, the request follows this path:
 
-### Premium Partners
+1. **Browser:** The user fills out the form and submits a `POST` request containing text fields and an image.
+2. **Route:** Laravel matches the request to `students.store` through the resource route in `routes/web.php`.
+3. **Controller:** `StudentController@store` receives the request and coordinates the registration process.
+4. **Validation:** Laravel checks required fields, formats, allowed values, uniqueness, and the uploaded image. Invalid data redirects back with errors and old input.
+5. **Model:** Validated values are normalized and passed to the `Student` Eloquent model.
+6. **Database:** Eloquent inserts the student record into the `students` table. The image is stored on the public disk and its path is saved in the record.
+7. **Response:** Laravel redirects to the student profile page and stores a `success` flash message in the session.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```mermaid
+flowchart LR
+    A[Browser submits form] --> B[students.store route]
+    B --> C[StudentController@store]
+    C --> D{Laravel validation}
+    D -- Invalid --> E[Redirect back with errors]
+    E --> A
+    D -- Valid --> F[Store profile image]
+    F --> G[Student model]
+    G --> H[(students database table)]
+    H --> I[Redirect to profile with flash message]
+    I --> J[Browser displays student profile]
+```
 
-## Contributing
+## 4. Validation Rules
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Validation is performed in `StudentController@store` before any database insert or file storage operation.
 
-## Code of Conduct
+| Rule | Fields | Why it matters |
+| --- | --- | --- |
+| Required | Student ID, first name, last name, email, mobile number, date of birth, gender, program, year level, address, and profile picture | Prevents incomplete student records and ensures essential information is available. Middle name is optional. |
+| Unique | `student_id`, `email` | Prevents duplicate student identities and prevents one email address from being assigned to multiple records. |
+| Email | `email` | Confirms that the value follows a valid email format before it is used for communication. |
+| Numeric | `mobile_number` | Ensures the submitted mobile number contains numeric characters as required by this activity. |
+| Image | `profile_picture` with `image` | Rejects non-image uploads and reduces the risk of storing an inappropriate file type. |
+| MIME type | `jpg`, `jpeg`, `png` | Limits profile pictures to the image formats supported by the interface. |
+| File size | `max:2048` | Limits the image to 2 MB, which reduces storage use and upload time. Laravel file-size limits are expressed in kilobytes. |
+| Allowed values | `gender` must be `Male`, `Female`, or `Other` | Keeps categorical data consistent for searching and reporting. |
+| String length | Names, student ID, email, program, and year level have maximum lengths | Protects database capacity and prevents unusually large input values. |
+| Date | `date_of_birth` | Ensures the date can be interpreted and stored as a date value. |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The form also uses browser-side attributes such as `required`, `type="email"`, and `accept="image/jpeg,image/png"`. These improve the user experience, but server-side validation remains necessary because browser checks can be bypassed.
 
-## Security Vulnerabilities
+## 5. Database Design
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Entity Relationship Diagram
 
-## License
+The current application contains one main entity. Each row in `students` represents one registered student.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```mermaid
+erDiagram
+    STUDENTS {
+        bigint id PK
+        varchar student_id UK
+        varchar first_name
+        varchar middle_name NULL
+        varchar last_name
+        varchar email UK
+        varchar mobile_number
+        date date_of_birth
+        varchar gender
+        varchar program
+        varchar year_level
+        text address
+        varchar profile_picture
+        timestamp created_at
+        timestamp updated_at
+    }
+```
+
+### `students` table structure
+
+| Column | Data type | Key / constraint | Description |
+| --- | --- | --- | --- |
+| `id` | BIGINT unsigned | Primary key, auto-increment | Internal identifier for each record. |
+| `student_id` | VARCHAR(255) | Unique, not nullable | Institution-provided student identifier. |
+| `first_name` | VARCHAR(255) | Not nullable | Student's first name. |
+| `middle_name` | VARCHAR(255) | Nullable | Student's middle name, when provided. |
+| `last_name` | VARCHAR(255) | Not nullable | Student's last name. |
+| `email` | VARCHAR(255) | Unique, not nullable | Student's email address. |
+| `mobile_number` | VARCHAR(255) | Not nullable | Contact number stored as text to preserve formatting and leading zeroes. |
+| `date_of_birth` | DATE | Not nullable | Student's birth date. |
+| `gender` | VARCHAR(255) | Not nullable | Selected gender value. |
+| `program` | VARCHAR(255) | Not nullable | Academic program. |
+| `year_level` | VARCHAR(255) | Not nullable | Current year level. |
+| `address` | TEXT | Not nullable | Complete residential address. |
+| `profile_picture` | VARCHAR(255) | Not nullable | Path to the image stored on Laravel's public disk. |
+| `created_at`, `updated_at` | TIMESTAMP | Laravel timestamps | Record creation and modification times. |
+
+The primary key is `id`. The unique constraints on `student_id` and `email` provide database-level protection against duplicates in addition to controller validation. The model's `$fillable` list explicitly permits only the expected registration fields for mass assignment.
+
+## 6. Registration Flowchart
+
+```mermaid
+flowchart TD
+    A([User opens registration page]) --> B[Fill out student form]
+    B --> C[Submit registration]
+    C --> D[Laravel validates request]
+    D --> E{Valid data?}
+    E -- No --> F[Display validation errors]
+    F --> B
+    E -- Yes --> G[Upload profile picture]
+    G --> H[Create Student model]
+    H --> I[(Save record to database)]
+    I --> J[Set success flash message]
+    J --> K([Display student profile])
+```
+
+## 7. Screenshots
+
+<div align="center">
+  <h3>Registration Form</h3>
+  <img src="app/docs/screenshots/Registration%20Form.png" alt="Registration form" width="900" />
+</div>
+
+<div align="center">
+  <h3>Validation Errors</h3>
+  <img src="app/docs/screenshots/Validation%20Errors.png" alt="Validation errors" width="900" />
+</div>
+
+<div align="center">
+  <h3>Successful Registration</h3>
+  <img src="app/docs/screenshots/Successful%20Registration.png" alt="Successful registration" width="900" />
+</div>
+
+<div align="center">
+  <h3>Flash Message</h3>
+  <img src="app/docs/screenshots/Flash%20Message.png" alt="Flash message" width="900" />
+</div>
+
+<div align="center">
+  <h3>Uploaded Profile Picture</h3>
+  <img src="app/docs/screenshots/Uploaded%20Profile%20Picture.png" alt="Uploaded profile picture" width="900" />
+</div>
+
+<div align="center">
+  <h3>Student Profile Page</h3>
+  <img src="app/docs/screenshots/Student%20Profile%20Page.png" alt="Student profile page" width="900" />
+</div>
+
+<div align="center">
+  <h3>VS Code Project Structure</h3>
+  <img src="app/docs/screenshots/VS%20Code%20Project%20Structure.png" alt="VS Code project structure" width="900" />
+</div>
+
+<div align="center">
+  <h3>GitHub Repository</h3>
+  <img src="app/docs/screenshots/GitHub%20Repository.png" alt="GitHub repository" width="900" />
+</div>
+
+## 8. Problems Encountered
+
+1. **Validation errors were not appearing clearly.** Without field-level error output, users could not tell which input needed correction.
+2. **The image upload path could be incorrect.** Laravel stores the image path in the database, while the browser needs a publicly accessible URL to display the file.
+3. **The database migration could fail or the table could be missing.** The application cannot create student records until the `students` migration has been run against the configured database.
+4. **The storage link could be missing.** Files stored on Laravel's `public` disk need the `public/storage` symbolic link before browser URLs can resolve correctly.
+
+## 9. Solutions
+
+1. The Blade views use Laravel's `@error` directive beside each field. The controller returns to the form automatically after validation failure, and Laravel preserves old input so the user does not need to retype everything.
+2. The controller stores the uploaded image with `$request->file('profile_picture')->store('students', 'public')`. The profile and directory views display it with `asset('storage/' . $student->profile_picture)`, matching Laravel's public-disk convention.
+3. The migration in `database/migrations/2026_08_28_091703_create_students_table.php` defines the table. Running `php artisan migrate` creates the table, and checking the configured `.env` database connection confirms Laravel is using the intended database.
+4. Running `php artisan storage:link` creates the public link from `storage/app/public` to `public/storage`. After that, uploaded profile images can be loaded by the browser.
+
+## 10. Reflection
+
+Validation is one of the most important parts of a student registration system because the information collected becomes a source of truth for other activities. A record with a missing name, invalid email, duplicate student ID, or unreadable image can create problems for admissions, reporting, communication, and future updates. Validation provides a controlled boundary between user input and application data. In this project, Laravel's validation rules made that boundary explicit and returned useful messages when the submitted data did not meet the requirements.
+
+I learned that handling user input involves more than reading values from a form. The application must decide which fields are required, which formats are acceptable, which values are unique, and how much data should be stored. I also learned that valid data sometimes needs normalization. The controller formats names consistently before creating the model, which makes the directory easier to read. The model then provides a structured way to access the saved student and its attributes.
+
+Server-side validation is more dependable than client-side validation alone. HTML attributes such as `required` and `type="email"` are helpful because they give immediate feedback in the browser, but they can be disabled or bypassed by sending a request directly to the server. Laravel validates every request at the application boundary, regardless of the browser or tool that sent it. Database unique constraints provide another layer of protection against duplicate student IDs and email addresses.
+
+File security is also important. An uploaded file should not be trusted just because its filename ends in `.jpg` or `.png`. The application checks that the file is an image, restricts the accepted MIME extensions, and limits the size to 2 MB. Storing the file through Laravel's storage system and saving only its generated path in the database keeps the record manageable and gives the application a consistent way to serve the image. In a production system, additional controls such as authorization, malware scanning, private storage, and carefully configured permissions would also be appropriate.
+
+In real enterprise software, registration systems connect people to larger workflows. A university may use a student record to support enrollment, schedules, billing, advising, identification cards, and reports. The same design pattern appears in employee onboarding, patient registration, and customer account creation. This activity showed me how routes, controllers, validation, models, migrations, views, and storage work together to turn a form into a dependable business process. The main lesson is that a registration page is not only a user interface; it is the first controlled step in maintaining trustworthy organizational data.
+
+The project also demonstrated why a reliable workflow needs clear responsibilities. The route identifies the action, the controller coordinates it, the validator protects the boundary, the model represents the record, and the database enforces persistence. Separating these responsibilities makes future changes easier, such as adding search, editing, authentication, or additional student fields. It also makes errors easier to investigate because each part of the process has a clear purpose. In a real deployment, student information would additionally require access control, privacy policies, backups, audit logs, and careful handling of personally identifiable information.
+
+## 11. References
+
+Laravel. (n.d.). *Laravel documentation*. Retrieved September 8, 2026, from https://laravel.com/docs
+
+MDN Web Docs. (n.d.). *HTML forms guide*. Retrieved September 8, 2026, from https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms
+
+MySQL. (n.d.). *MySQL 8.4 reference manual*. Retrieved September 8, 2026, from https://dev.mysql.com/doc/refman/8.4/en/
+
+PHP Documentation Group. (n.d.). *PHP manual*. Retrieved September 8, 2026, from https://www.php.net/docs.php
+
+Tailwind Labs. (n.d.). *Tailwind CSS documentation*. Retrieved September 8, 2026, from https://tailwindcss.com/docs
+
+## 12. Running the Project
+
+### Requirements
+
+- PHP 8.2 or newer
+- Composer
+- Node.js and npm
+- A configured database such as SQLite or MySQL
+
+### Setup
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm install
+npm run build
+php artisan storage:link
+php artisan serve
+```
+
+Open `http://127.0.0.1:8000` in a browser. The root route opens the registration form. The student directory is available at `/students`.
+
+### Useful commands
+
+```bash
+php artisan migrate:fresh
+php artisan test
+php artisan route:list
+php artisan storage:link
+```
