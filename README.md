@@ -25,30 +25,22 @@ This activity accomplished the following learning objectives:
 - Understand how a web request travels through the Laravel framework.
 - Document the application and its database design using Markdown and diagrams.
 
-## 3. Laravel Request Lifecycle
+## 3. Student Registration System Diagram
 
-When a user submits the registration form, the request follows this path:
-
-1. **Browser:** The user fills out the form and submits a `POST` request containing text fields and an image.
-2. **Route:** Laravel matches the request to `students.store` through the resource route in `routes/web.php`.
-3. **Controller:** `StudentController@store` receives the request and coordinates the registration process.
-4. **Validation:** Laravel checks required fields, formats, allowed values, uniqueness, and the uploaded image. Invalid data redirects back with errors and old input.
-5. **Model:** Validated values are normalized and passed to the `Student` Eloquent model.
-6. **Database:** Eloquent inserts the student record into the `students` table. The image is stored on the public disk and its path is saved in the record.
-7. **Response:** Laravel redirects to the student profile page and stores a `success` flash message in the session.
+The registration process follows a simple flow from form submission to final profile display.
 
 ```mermaid
 flowchart LR
-    A[Browser submits form] --> B[students.store route]
-    B --> C[StudentController store]
-    C --> D{Laravel validation}
-    D -- Invalid --> E[Redirect back with errors]
-    E --> A
-    D -- Valid --> F[Store profile image]
-    F --> G[Student model]
-    G --> H[(students database table)]
-    H --> I[Redirect to profile with flash message]
-    I --> J[Browser displays student profile]
+    A[User opens registration form] --> B[Submit student details]
+    B --> C[Laravel routes the request]
+    C --> D[Controller validates input]
+    D --> E{Valid data?}
+    E -- No --> F[Show validation errors]
+    F --> A
+    E -- Yes --> G[Store uploaded profile photo]
+    G --> H[Save student record to database]
+    H --> I[Redirect to profile page]
+    I --> J[Display success message]
 ```
 
 ## 4. Validation Rules
@@ -80,11 +72,11 @@ The current application contains one main entity. Each row in `students` represe
 erDiagram
     STUDENTS {
         int id PK
-        string student_id UK
+        string student_id
         string first_name
-        string middle_name "nullable"
+        string middle_name
         string last_name
-        string email UK
+        string email
         string mobile_number
         date date_of_birth
         string gender
@@ -92,8 +84,8 @@ erDiagram
         string year_level
         string address
         string profile_picture
-        timestamp created_at
-        timestamp updated_at
+        datetime created_at
+        datetime updated_at
     }
 ```
 
