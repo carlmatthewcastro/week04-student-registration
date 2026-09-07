@@ -29,19 +29,6 @@ This activity accomplished the following learning objectives:
 
 The registration process follows a simple flow from form submission to final profile display.
 
-```mermaid
-flowchart LR
-    A[User opens registration form] --> B[Submit student details]
-    B --> C[Laravel routes the request]
-    C --> D[Controller validates input]
-    D --> E{Valid data?}
-    E -- No --> F[Show validation errors]
-    F --> A
-    E -- Yes --> G[Store uploaded profile photo]
-    G --> H[Save student record to database]
-    H --> I[Redirect to profile page]
-    I --> J[Display success message]
-```
 
 ## 4. Validation Rules
 
@@ -68,47 +55,6 @@ The form also uses browser-side attributes such as `required`, `type="email"`, a
 
 The current application contains one main entity. Each row in `students` represents one registered student.
 
-```mermaid
-erDiagram
-    STUDENTS {
-        int id PK
-        string student_id
-        string first_name
-        string middle_name
-        string last_name
-        string email
-        string mobile_number
-        date date_of_birth
-        string gender
-        string program
-        string year_level
-        string address
-        string profile_picture
-        datetime created_at
-        datetime updated_at
-    }
-```
-
-### `students` table structure
-
-| Column | Data type | Key / constraint | Description |
-| --- | --- | --- | --- |
-| `id` | BIGINT unsigned | Primary key, auto-increment | Internal identifier for each record. |
-| `student_id` | VARCHAR(255) | Unique, not nullable | Institution-provided student identifier. |
-| `first_name` | VARCHAR(255) | Not nullable | Student's first name. |
-| `middle_name` | VARCHAR(255) | Nullable | Student's middle name, when provided. |
-| `last_name` | VARCHAR(255) | Not nullable | Student's last name. |
-| `email` | VARCHAR(255) | Unique, not nullable | Student's email address. |
-| `mobile_number` | VARCHAR(255) | Not nullable | Contact number stored as text to preserve formatting and leading zeroes. |
-| `date_of_birth` | DATE | Not nullable | Student's birth date. |
-| `gender` | VARCHAR(255) | Not nullable | Selected gender value. |
-| `program` | VARCHAR(255) | Not nullable | Academic program. |
-| `year_level` | VARCHAR(255) | Not nullable | Current year level. |
-| `address` | TEXT | Not nullable | Complete residential address. |
-| `profile_picture` | VARCHAR(255) | Not nullable | Path to the image stored on Laravel's public disk. |
-| `created_at`, `updated_at` | TIMESTAMP | Laravel timestamps | Record creation and modification times. |
-
-The primary key is `id`. The unique constraints on `student_id` and `email` provide database-level protection against duplicates in addition to controller validation. The model's `$fillable` list explicitly permits only the expected registration fields for mass assignment.
 
 ## 6. Registration Flowchart
 
