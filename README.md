@@ -40,7 +40,7 @@ When a user submits the registration form, the request follows this path:
 ```mermaid
 flowchart LR
     A[Browser submits form] --> B[students.store route]
-    B --> C[StudentController@store]
+    B --> C[StudentController store]
     C --> D{Laravel validation}
     D -- Invalid --> E[Redirect back with errors]
     E --> A
@@ -79,19 +79,19 @@ The current application contains one main entity. Each row in `students` represe
 ```mermaid
 erDiagram
     STUDENTS {
-        bigint id PK
-        varchar student_id UK
-        varchar first_name
-        varchar middle_name NULL
-        varchar last_name
-        varchar email UK
-        varchar mobile_number
+        int id PK
+        string student_id UK
+        string first_name
+        string middle_name "nullable"
+        string last_name
+        string email UK
+        string mobile_number
         date date_of_birth
-        varchar gender
-        varchar program
-        varchar year_level
-        text address
-        varchar profile_picture
+        string gender
+        string program
+        string year_level
+        string address
+        string profile_picture
         timestamp created_at
         timestamp updated_at
     }
